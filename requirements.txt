@@ -1,0 +1,9 @@
+Flask==2.0.3
+itsdangerous==2.0.1
+Jinja2==3.0.3
+google-cloud-storage
+gunicorn==20.1.0
+python-dotenv
+requests==2.29.0
+Werkzeug==2.2.2
+psycopg2==2.9.9

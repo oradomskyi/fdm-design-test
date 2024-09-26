@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+
+      function update_info(header, data){
+        info = document.getElementById('info');
+          info.innerHTML = "<div>"+header+"</div>"; 
+          console.log(data);
+          for (const [key, value] of Object.entries(data)) {
+            info.innerHTML = info.innerHTML+"<div>";
+            value.forEach((item) => {
+              info.innerHTML = info.innerHTML + item;
+                info.innerHTML = info.innerHTML + "</div>";
+                info.innerHTML = info.innerHTML + "<div>";
+            });
+            info.innerHTML = info.innerHTML + "</div>";
+          } // end for
+      }
+
+      function select_all_grades(){ $.get('/selectAllGrades', function(data) {update_info("ID, QualityGroupID, Name", data);}); }
+      function select_all_quality_groups(){$.get('/selectAllQualityGroups', function(data) {update_info("ID, Name", data);});}
+      function select_all_moulds(){$.get('/selectAllMoulds', function(data) {update_info("ID, Size, Name, Duration", data);});}
+      function select_all_order_forecast(){$.get('/selectAllOrderForecast', function(data) {update_info("ID, Year, Month, QualityGroupID, Heats", data);});}
+      function select_all_production_monthly(){$.get('/selectAllProductionMonthly', function(data) {update_info("ID, Month, Year, GradeID, Tons", data);});}
+      function select_all_charges(){$.get('/selectAllCharges', function(data) {update_info("ID, timestamp, GradeID, MouldID", data);});}
+
+      function clear_all_grades(){$.get('/clearAllGrades', function(data) {update_info("Deleted", null)});}
+      function clear_all_quality_groups(){$.get('/clearAllQualityGroups', function(data) {update_info("Deleted", null);});}
+      function clear_all_moulds(){$.get('/clearAllMoulds', function(data) {update_info("Deleted", null);});}
+      function clear_all_order_forecast(){$.get('/clearAllOrderForecast', function(data) {update_info("Deleted", null);});}
+      function clear_all_production_monthly(){$.get('/clearAllProductionMonthly', function(data) {update_info("Deleted", null);});}
+      function clear_all_charges(){$.get('/clearAllCharges', function(data) {update_info("Deleted", null);});}
+      
+      function get_grades_24_9(){ 
+        // well, we can pass here month and year we need
+        // hardcoded for getting Demo faster
+        $.get('/predictSeptember24', function(data) {
+          console.log(JSON.stringify(data.data));
+          info = document.getElementById('info');
+
+          for (const [key, value] of Object.entries(data.data)) {
+            info.innerHTML = info.innerHTML + "<div>"+JSON.stringify(key) + ":" + JSON.stringify(value) + "</div>";
+          }
+          
+        }); 
+      }
+
+      function recreate_database_Ledger(){ 
+        $.get('/recreateDatabaseLedger', function(data) {
+          update_info("Ledger database recreated!", null);
+        }); 
+      }
+
+    </script>
+  </head>
+  <body>
+
+    <title>FDM API Test</title>
+    <div>This is FDM API test page</div>
+    <div id="is_online" style="font-weight:bold;"></div>
+    <div id="db_status"></div>
+    <ul>
+    <button type="button" class="button" onclick="recreate_database_Ledger()">Recreate the Ledger database</button>
+    </ul>
+    <ul>
+    <button type="button" class="button" onclick="select_all_grades()">SELECT * FROM grades</button>
+    <button type="button" class="button" onclick="select_all_quality_groups()">SELECT * FROM quality_groups</button>
+    <button type="button" class="button" onclick="select_all_moulds()">SELECT * FROM moulds</button>
+    <button type="button" class="button" onclick="select_all_order_forecast()">SELECT * FROM order_forecast</button>
+    <button type="button" class="button" onclick="select_all_production_monthly()">SELECT * FROM production_monthly</button>
+    <button type="button" class="button" onclick="select_all_charges()">SELECT * FROM charges</button>
+    </ul>
+
+    <!--ul>
+      <button type="button" class="button" onclick="clear_all_grades()">DELETE FROM grades</button>
+      <button type="button" class="button" onclick="clear_all_quality_groups()">DELETE FROM quality_groups</button>
+      <button type="button" class="button" onclick="clear_all_moulds()">DELETE FROM moulds</button>
+      <button type="button" class="button" onclick="clear_all_order_forecast()">DELETE FROM order_forecast</button>
+      <button type="button" class="button" onclick="clear_all_production_monthly()">DELETE FROM production_monthly</button>
+      <button type="button" class="button" onclick="clear_all_charges()">DELETE FROM charges</button>
+    </ul-->
+
+    <button type="button" class="button" onclick="get_grades_24_9()">Get Grades prediction for September 2024</button>
+
+    <form action = "/uploadDailySchedule" method = "post" enctype="multipart/form-data">   
+      <input type="file" name="file" />   
+      <input type = "submit" value="Upload daily charge schedule">   
+    </form>  
+    <form action = "/uploadProductionHistory" method = "post" enctype="multipart/form-data">   
+      <input type="file" name="file" />   
+      <input type = "submit" value="Upload production history">   
+    </form>  
+    <form action = "/uploadOrderForecast" method = "post" enctype="multipart/form-data">   
+      <input type="file" name="file" />   
+      <input type = "submit" value="Upload order forecast">   
+    </form>  
+
+    <div id="info"></div>
+  </body>
+</html>
