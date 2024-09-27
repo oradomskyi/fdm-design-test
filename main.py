@@ -394,4 +394,4 @@ def main():
 
 if __name__ == "__main__":
     # http is only for demo test purposes, https is obligatory for production.
-    app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
